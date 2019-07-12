@@ -23,8 +23,7 @@ public class Main {
 				break;
 			}
 		}
-		
-		
+
 	}
 	
 	private static void logIn(Scanner in) {
