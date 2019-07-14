@@ -3,7 +3,8 @@ import java.util.Scanner;
 
 public class Main {
 	int x = 0;
-	public static void main(String[] args) {
+	static String my_username;
+	public static void main(String[] args) throws IOException {
 		System.out.println("Please select log in or register, 1 for log in; 2 for register");
 		
 		Scanner in = new Scanner(System.in);
@@ -23,7 +24,19 @@ public class Main {
 				break;
 			}
 		}
-
+		while(true) {
+			System.out.println("Please select: 1 for create new chatroom; 2 for enter chatroom");
+			chosenState = in.nextInt(); 
+			in.nextLine();
+			if(chosenState==1){
+				createChatroom(in);
+				break;
+				
+			}else if(chosenState==2){
+				enterChatroom(in);				
+				break;
+				}
+		}
 	}
 	
 	private static void logIn(Scanner in) {
@@ -57,6 +70,7 @@ public class Main {
 			
 			
 			if(loginSuccessed) {
+				my_username = userName;
 				break;
 			}
 			else {
@@ -87,7 +101,44 @@ public class Main {
 			e.printStackTrace();
 			System.out.println(e);
 		}
+		my_username = userName;
 		
 		
+	}
+	private static void createChatroom(Scanner in) throws IOException {
+        Server server=new Server(in);
+        server.start(6666);
+        
+        while(true) {
+        	System.out.println("Enter your message");
+            String message = in.nextLine();
+	        if(message.equals("quit")) {
+	        	server.stop();
+	        	System.out.println("you have shut down the server");
+	        	break;
+	        }
+            String response = server.sendMessage(message);
+            System.out.println("You have received a message" + response);
+        }
+	}
+	
+	private static void enterChatroom(Scanner in) throws IOException {
+		GreetClient client = new GreetClient();
+		System.out.println("Please enter the chatroom ip");
+		String chatroom_ip = in.nextLine(); 
+        client.startConnection(chatroom_ip, 6666);
+        String response = client.sendMessage(my_username);
+        System.out.println("from server:"+response);
+        while(true) {
+	        System.out.println("enter message:");
+	        String message=in.nextLine();
+	        if(message.equals("quit")) {
+	        	client.stopConnection();
+	        	System.out.println("you have quit the chatroom");
+	        	break;
+	        }
+	        response = client.sendMessage(message);
+	        System.out.println("from server:"+response);
+        }
 	}
 }

@@ -26,13 +26,18 @@ public class GreetClient {
     
     public static void main(String[] args) throws IOException {
         GreetClient client = new GreetClient();
-        client.startConnection("192.168.1.2", 6666);
+        client.startConnection("192.168.1.4", 6666);
         Scanner in = new Scanner(System.in);
         while(true) {
-        System.out.println("enter message:");
-        String message=in.nextLine();
-        String response = client.sendMessage(message);
-        System.out.println("from server:"+response);
+	        System.out.println("enter message:");
+	        String message=in.nextLine();
+	        if(message.equals("quit")) {
+	        	client.stopConnection();
+	        	System.out.println("you have quit the chatroom");
+	        	break;
+	        }
+	        String response = client.sendMessage(message);
+	        System.out.println("from server:"+response);
         }
     }
 }
